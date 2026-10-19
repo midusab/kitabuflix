@@ -19,6 +19,7 @@ import { SampleReaderModal } from './components/SampleReaderModal';
 import { CartDrawer } from './components/CartDrawer';
 import { WishlistModal } from './components/WishlistModal';
 import { OrdersModal } from './components/OrdersModal';
+import { AudiobookPlayerModal } from './components/AudiobookPlayerModal';
 import { 
   BookMarked, 
   ShieldCheck, 
@@ -535,8 +536,9 @@ const BookstoreContent: React.FC = () => {
         </div>
       </footer>
 
-      {/* Interactive Drawers and Reader Modals */}
+      {/* Interactive Drawers, Audiobooks, and Reader Modals */}
       <SampleReaderModal />
+      <AudiobookPlayerModal />
       <CartDrawer />
       <WishlistModal 
         isOpen={isWishlistModalOpen} 

@@ -24,7 +24,8 @@ export const HeroBillboard: React.FC = () => {
     isInWishlist, 
     addToCart, 
     setIsCheckoutOpen,
-    formatPrice 
+    formatPrice,
+    playAudioBook 
   } = useStore();
 
   const spotlightBooks = books.filter((b) => b.featured).slice(0, 4);
@@ -173,16 +174,12 @@ export const HeroBillboard: React.FC = () => {
           <div className="flex items-center gap-3">
             {/* Audio Toggle Button */}
             <button
-              onClick={() => setIsPlayingAudio(!isPlayingAudio)}
-              aria-label={isPlayingAudio ? 'Mute book excerpt audio' : 'Play book excerpt audio'}
-              className="p-2.5 rounded-full border border-white/30 bg-black/40 hover:bg-black/70 text-white backdrop-blur-md transition-all cursor-pointer"
-              title={isPlayingAudio ? 'Mute narrator sample' : 'Listen to narrator sample'}
+              onClick={() => playAudioBook(book)}
+              aria-label="Play audiobook sample in studio player"
+              className="p-2.5 rounded-full border border-white/30 bg-black/60 hover:bg-[#e50914] hover:border-[#e50914] text-white backdrop-blur-md transition-all cursor-pointer shadow-lg group"
+              title="Listen to Audiobook in Studio Player"
             >
-              {isPlayingAudio ? (
-                <VolumeX className="w-4 h-4" />
-              ) : (
-                <Volume2 className="w-4 h-4" />
-              )}
+              <Volume2 className="w-4 h-4 group-hover:scale-110 transition-transform" />
             </button>
 
             {/* Exact Netflix Maturity Rating Border Box */}

@@ -16,7 +16,8 @@ import {
   Tag,
   Laptop,
   Globe,
-  TrendingUp
+  TrendingUp,
+  Headphones
 } from 'lucide-react';
 import { useAuth } from '../context/AuthContext';
 import { useStore } from '../context/StoreContext';
@@ -43,6 +44,8 @@ export const Navbar: React.FC<NavbarProps> = ({
     setIsCheckoutOpen,
     currency, 
     toggleCurrency,
+    playingAudioBook,
+    setIsAudioPlayerOpen,
     cartTotalKes,
     formatPrice,
     setSelectedBook,
@@ -264,6 +267,26 @@ export const Navbar: React.FC<NavbarProps> = ({
             <span className="text-slate-300">/</span>
             <span className={currency === 'USD' ? 'text-[#1e90ff]' : 'text-slate-400'}>USD</span>
           </button>
+
+          {/* Active Audiobook Player Indicator */}
+          {playingAudioBook && (
+            <button
+              onClick={() => setIsAudioPlayerOpen(true)}
+              aria-label={`Open audiobook player: ${playingAudioBook.title}`}
+              className="flex items-center gap-1.5 px-2.5 py-1.5 rounded-md bg-[#e50914]/10 hover:bg-[#e50914] text-[#e50914] hover:text-white border border-[#e50914]/30 hover:border-[#e50914] transition-all cursor-pointer shadow-xs group"
+              title={`Now Playing Audiobook: ${playingAudioBook.title}`}
+            >
+              <Headphones className="w-3.5 h-3.5" />
+              <div className="hidden sm:flex items-center gap-0.5">
+                <span className="w-0.5 h-2 bg-[#e50914] group-hover:bg-white animate-pulse" />
+                <span className="w-0.5 h-3.5 bg-[#e50914] group-hover:bg-white animate-bounce" />
+                <span className="w-0.5 h-1.5 bg-[#e50914] group-hover:bg-white animate-pulse" />
+              </div>
+              <span className="text-xs font-bold hidden lg:inline max-w-[100px] truncate">
+                Audio
+              </span>
+            </button>
+          )}
 
           {/* Wishlist Button with Red Badge */}
           <button

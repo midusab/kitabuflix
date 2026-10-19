@@ -38,7 +38,8 @@ export const BookDetailPage: React.FC = () => {
     reviewsByBook,
     loadBookReviews,
     submitReview,
-    showToast
+    showToast,
+    playAudioBook
   } = useStore();
 
   const { user } = useAuth();
@@ -210,6 +211,17 @@ export const BookDetailPage: React.FC = () => {
                   >
                     <BookOpen className="w-4 h-4 text-[#1e90ff]" />
                     <span>Read Sample Excerpt (Free)</span>
+                  </button>
+                )}
+
+                {/* Audiobook Player Trigger */}
+                {selectedBook.formats.includes('Audiobook') && (
+                  <button
+                    onClick={() => playAudioBook(selectedBook)}
+                    className="w-full max-w-[280px] mt-2 py-2.5 px-4 rounded-md bg-[#e50914] hover:bg-[#f40612] text-white text-xs font-bold transition-all flex items-center justify-center gap-2 cursor-pointer shadow-md shadow-[#e50914]/25"
+                  >
+                    <Headphones className="w-4 h-4" />
+                    <span>Listen to Audiobook Sample</span>
                   </button>
                 )}
               </div>

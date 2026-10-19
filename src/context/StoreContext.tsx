@@ -32,6 +32,11 @@ interface StoreContextType {
   setSelectedBook: (book: Book | null) => void;
   readingBook: Book | null;
   setReadingBook: (book: Book | null) => void;
+  playingAudioBook: Book | null;
+  setPlayingAudioBook: (book: Book | null) => void;
+  isAudioPlayerOpen: boolean;
+  setIsAudioPlayerOpen: (open: boolean) => void;
+  playAudioBook: (book: Book) => void;
 
   // Filter & Search
   searchQuery: string;
@@ -106,6 +111,14 @@ export const StoreProvider: React.FC<{ children: React.ReactNode }> = ({ childre
   const [books] = useState<Book[]>(BOOKS_DATA);
   const [selectedBook, setSelectedBook] = useState<Book | null>(null);
   const [readingBook, setReadingBook] = useState<Book | null>(null);
+  const [playingAudioBook, setPlayingAudioBook] = useState<Book | null>(null);
+  const [isAudioPlayerOpen, setIsAudioPlayerOpen] = useState(false);
+
+  const playAudioBook = (book: Book) => {
+    setPlayingAudioBook(book);
+    setIsAudioPlayerOpen(true);
+    showToast(`Now Playing: ${book.title}`);
+  };
 
   // Filters
   const [searchQuery, setSearchQuery] = useState('');
@@ -660,6 +673,11 @@ export const StoreProvider: React.FC<{ children: React.ReactNode }> = ({ childre
         setSelectedBook,
         readingBook,
         setReadingBook,
+        playingAudioBook,
+        setPlayingAudioBook,
+        isAudioPlayerOpen,
+        setIsAudioPlayerOpen,
+        playAudioBook,
         searchQuery,
         setSearchQuery,
         selectedCategory,

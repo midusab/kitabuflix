@@ -31,7 +31,8 @@ export const BookCard: React.FC<BookCardProps> = ({
     isInWishlist, 
     addToCart, 
     setIsCheckoutOpen,
-    formatPrice 
+    formatPrice,
+    playAudioBook
   } = useStore();
 
   const isFavorited = isInWishlist(book.id);
@@ -99,14 +100,36 @@ export const BookCard: React.FC<BookCardProps> = ({
               </span>
             )}
             {book.formats.includes('Audiobook') && (
-              <span className="p-0.5 px-1 rounded-xs bg-black/80 backdrop-blur-md text-[#1e90ff] border border-white/10" title="Audiobook format">
+              <button
+                onClick={(e) => {
+                  e.stopPropagation();
+                  playAudioBook(book);
+                }}
+                className="p-0.5 px-1.5 rounded-xs bg-black/80 hover:bg-[#e50914] backdrop-blur-md text-[#1e90ff] hover:text-white border border-white/10 flex items-center gap-1 cursor-pointer transition-colors"
+                title="Listen to Audiobook"
+              >
                 <Headphones className="w-2.5 h-2.5" />
-              </span>
+                <span className="text-[9px] font-bold">Audio</span>
+              </button>
             )}
           </div>
 
           {/* Top Right Quick Actions */}
           <div className="absolute top-1.5 right-1.5 flex flex-col gap-1 z-20 opacity-90 sm:opacity-0 sm:group-hover:opacity-100 transition-opacity">
+            {book.formats.includes('Audiobook') && (
+              <button
+                onClick={(e) => {
+                  e.stopPropagation();
+                  playAudioBook(book);
+                }}
+                aria-label={`Listen to audiobook of ${book.title}`}
+                className="p-1.5 rounded-xs bg-[#e50914] hover:bg-[#f40612] text-white backdrop-blur-md transition-all cursor-pointer shadow-md"
+                title="Play Audiobook Sample"
+              >
+                <Headphones className="w-3.5 h-3.5" />
+              </button>
+            )}
+
             <button
               onClick={(e) => {
                 e.stopPropagation();
