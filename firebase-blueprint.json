@@ -1,0 +1,273 @@
+{
+  "entities": {
+    "UserProfile": {
+      "title": "UserProfile",
+      "description": "User profile document storing basic account metadata.",
+      "type": "object",
+      "properties": {
+        "uid": {
+          "type": "string",
+          "description": "Unique identifier of the user matching auth.uid",
+          "maxLength": 128
+        },
+        "email": {
+          "type": "string",
+          "description": "User email address",
+          "maxLength": 256
+        },
+        "displayName": {
+          "type": "string",
+          "description": "Display name of the user",
+          "maxLength": 128
+        },
+        "photoURL": {
+          "type": "string",
+          "description": "Profile picture URL",
+          "maxLength": 1024
+        },
+        "createdAt": {
+          "type": "string",
+          "description": "ISO timestamp or server timestamp string",
+          "maxLength": 64
+        }
+      },
+      "required": ["uid", "email"]
+    },
+    "WishlistItem": {
+      "title": "WishlistItem",
+      "description": "A book saved by the user to their personal wishlist.",
+      "type": "object",
+      "properties": {
+        "bookId": {
+          "type": "string",
+          "description": "Unique ID of the saved book",
+          "maxLength": 64
+        },
+        "title": {
+          "type": "string",
+          "description": "Book title",
+          "maxLength": 256
+        },
+        "author": {
+          "type": "string",
+          "description": "Book author",
+          "maxLength": 128
+        },
+        "coverUrl": {
+          "type": "string",
+          "description": "Book cover image URL",
+          "maxLength": 1024
+        },
+        "priceKes": {
+          "type": "number",
+          "description": "Price in KES"
+        },
+        "discountPercent": {
+          "type": "number",
+          "description": "Discount percentage"
+        },
+        "userId": {
+          "type": "string",
+          "description": "UID of the owner user",
+          "maxLength": 128
+        },
+        "addedAt": {
+          "type": "string",
+          "description": "Timestamp when added",
+          "maxLength": 64
+        }
+      },
+      "required": ["bookId", "title", "userId"]
+    },
+    "CartItem": {
+      "title": "CartItem",
+      "description": "Item stored in user shopping cart.",
+      "type": "object",
+      "properties": {
+        "bookId": {
+          "type": "string",
+          "description": "Unique ID of the book in cart",
+          "maxLength": 64
+        },
+        "title": {
+          "type": "string",
+          "description": "Book title",
+          "maxLength": 256
+        },
+        "author": {
+          "type": "string",
+          "description": "Book author",
+          "maxLength": 128
+        },
+        "coverUrl": {
+          "type": "string",
+          "description": "Book cover image URL",
+          "maxLength": 1024
+        },
+        "priceKes": {
+          "type": "number",
+          "description": "Price in KES"
+        },
+        "quantity": {
+          "type": "number",
+          "description": "Quantity selected"
+        },
+        "format": {
+          "type": "string",
+          "description": "Format chosen (ebook, audiobook, hardcover)",
+          "maxLength": 32
+        },
+        "userId": {
+          "type": "string",
+          "description": "UID of user",
+          "maxLength": 128
+        },
+        "updatedAt": {
+          "type": "string",
+          "description": "Timestamp of update",
+          "maxLength": 64
+        }
+      },
+      "required": ["bookId", "title", "quantity", "userId"]
+    },
+    "UserOrder": {
+      "title": "UserOrder",
+      "description": "Order placed via M-Pesa checkout.",
+      "type": "object",
+      "properties": {
+        "orderId": {
+          "type": "string",
+          "description": "Unique order receipt identifier",
+          "maxLength": 64
+        },
+        "userId": {
+          "type": "string",
+          "description": "UID of purchasing user",
+          "maxLength": 128
+        },
+        "customerName": {
+          "type": "string",
+          "description": "Customer contact name",
+          "maxLength": 128
+        },
+        "customerPhone": {
+          "type": "string",
+          "description": "Customer phone number for M-Pesa",
+          "maxLength": 32
+        },
+        "customerEmail": {
+          "type": "string",
+          "description": "Email address for receipt and digital book access",
+          "maxLength": 256
+        },
+        "totalKes": {
+          "type": "number",
+          "description": "Total amount paid in KES"
+        },
+        "mpesaReceiptNumber": {
+          "type": "string",
+          "description": "Safaricom M-Pesa transaction reference ID",
+          "maxLength": 64
+        },
+        "paymentStatus": {
+          "type": "string",
+          "description": "Payment status (completed, pending)",
+          "maxLength": 32
+        },
+        "itemsSummary": {
+          "type": "string",
+          "description": "Summary string of books in order",
+          "maxLength": 2048
+        },
+        "createdAt": {
+          "type": "string",
+          "description": "Order creation date",
+          "maxLength": 64
+        }
+      },
+      "required": ["orderId", "userId", "totalKes", "mpesaReceiptNumber", "paymentStatus"]
+    },
+    "BookReview": {
+      "title": "BookReview",
+      "description": "Community review and rating for a specific book.",
+      "type": "object",
+      "properties": {
+        "reviewId": {
+          "type": "string",
+          "description": "Unique identifier of review",
+          "maxLength": 64
+        },
+        "bookId": {
+          "type": "string",
+          "description": "ID of book being reviewed",
+          "maxLength": 64
+        },
+        "userId": {
+          "type": "string",
+          "description": "UID of the author reviewer",
+          "maxLength": 128
+        },
+        "userName": {
+          "type": "string",
+          "description": "Display name of reviewer",
+          "maxLength": 128
+        },
+        "userAvatar": {
+          "type": "string",
+          "description": "Avatar of reviewer",
+          "maxLength": 1024
+        },
+        "rating": {
+          "type": "number",
+          "description": "Star rating from 1 to 5"
+        },
+        "title": {
+          "type": "string",
+          "description": "Review headline",
+          "maxLength": 256
+        },
+        "comment": {
+          "type": "string",
+          "description": "Review body text",
+          "maxLength": 2048
+        },
+        "verifiedPurchase": {
+          "type": "boolean",
+          "description": "Whether user purchased the book"
+        },
+        "helpfulCount": {
+          "type": "number",
+          "description": "Count of helpful votes"
+        },
+        "createdAt": {
+          "type": "string",
+          "description": "Timestamp of review",
+          "maxLength": 64
+        }
+      },
+      "required": ["reviewId", "bookId", "userId", "userName", "rating", "comment"]
+    }
+  },
+  "firestore": {
+    "/users/{userId}": {
+      "schema": "UserProfile",
+      "description": "User profile documents strictly owned by matching auth.uid"
+    },
+    "/users/{userId}/wishlist/{bookId}": {
+      "schema": "WishlistItem",
+      "description": "User wishlist items subcollection"
+    },
+    "/users/{userId}/cart/{bookId}": {
+      "schema": "CartItem",
+      "description": "User cart items subcollection"
+    },
+    "/users/{userId}/orders/{orderId}": {
+      "schema": "UserOrder",
+      "description": "Customer completed orders subcollection"
+    },
+    "/books/{bookId}/reviews/{reviewId}": {
+      "schema": "BookReview",
+      "description": "Publicly readable book reviews subcollection, writable by authenticated reviewer"
+    }
+  }
+}

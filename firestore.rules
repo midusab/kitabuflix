@@ -1,0 +1,150 @@
+rules_version = '2';
+service cloud.firestore {
+  match /databases/{database}/documents {
+
+    // Global Safety Net (Default-Deny)
+    match /{document=**} {
+      allow read, write: if false;
+    }
+
+    // Security Primitives
+    function isSignedIn() {
+      return request.auth != null;
+    }
+
+    function isOwner(userId) {
+      return isSignedIn() && request.auth.uid == userId;
+    }
+
+    function isValidId(id) {
+      return id is string && id.size() > 0 && id.size() <= 128 && id.matches('^[a-zA-Z0-9_\\-]+$');
+    }
+
+    function incoming() {
+      return request.resource.data;
+    }
+
+    function existing() {
+      return resource.data;
+    }
+
+    // Entity Validators
+    function isValidUserProfile(data) {
+      return data.keys().hasAll(['uid', 'email']) &&
+             data.keys().hasOnly(['uid', 'email', 'displayName', 'photoURL', 'createdAt']) &&
+             data.uid == request.auth.uid &&
+             data.email is string && data.email.size() <= 256 &&
+             (!('displayName' in data) || (data.displayName is string && data.displayName.size() <= 128)) &&
+             (!('photoURL' in data) || (data.photoURL is string && data.photoURL.size() <= 1024)) &&
+             (!('createdAt' in data) || (data.createdAt is string && data.createdAt.size() <= 64));
+    }
+
+    function isValidWishlistItem(data) {
+      return data.keys().hasAll(['bookId', 'title', 'userId']) &&
+             data.keys().hasOnly(['bookId', 'title', 'author', 'coverUrl', 'priceKes', 'discountPercent', 'userId', 'addedAt']) &&
+             data.userId == request.auth.uid &&
+             data.bookId is string && data.bookId.size() <= 64 &&
+             data.title is string && data.title.size() <= 256 &&
+             (!('author' in data) || (data.author is string && data.author.size() <= 128)) &&
+             (!('coverUrl' in data) || (data.coverUrl is string && data.coverUrl.size() <= 1024)) &&
+             (!('priceKes' in data) || (data.priceKes is number && data.priceKes >= 0)) &&
+             (!('discountPercent' in data) || (data.discountPercent is number && data.discountPercent >= 0 && data.discountPercent <= 100)) &&
+             (!('addedAt' in data) || (data.addedAt is string && data.addedAt.size() <= 64));
+    }
+
+    function isValidCartItem(data) {
+      return data.keys().hasAll(['bookId', 'title', 'quantity', 'userId']) &&
+             data.keys().hasOnly(['bookId', 'title', 'author', 'coverUrl', 'priceKes', 'quantity', 'format', 'userId', 'updatedAt']) &&
+             data.userId == request.auth.uid &&
+             data.bookId is string && data.bookId.size() <= 64 &&
+             data.title is string && data.title.size() <= 256 &&
+             data.quantity is number && data.quantity > 0 && data.quantity <= 100 &&
+             (!('author' in data) || (data.author is string && data.author.size() <= 128)) &&
+             (!('coverUrl' in data) || (data.coverUrl is string && data.coverUrl.size() <= 1024)) &&
+             (!('priceKes' in data) || (data.priceKes is number && data.priceKes >= 0)) &&
+             (!('format' in data) || (data.format is string && data.format.size() <= 32)) &&
+             (!('updatedAt' in data) || (data.updatedAt is string && data.updatedAt.size() <= 64));
+    }
+
+    function isValidUserOrder(data) {
+      return data.keys().hasAll(['orderId', 'userId', 'totalKes', 'mpesaReceiptNumber', 'paymentStatus']) &&
+             data.keys().hasOnly(['orderId', 'userId', 'customerName', 'customerPhone', 'customerEmail', 'totalKes', 'mpesaReceiptNumber', 'paymentStatus', 'itemsSummary', 'createdAt']) &&
+             data.userId == request.auth.uid &&
+             data.orderId is string && data.orderId.size() <= 64 &&
+             data.totalKes is number && data.totalKes >= 0 &&
+             data.mpesaReceiptNumber is string && data.mpesaReceiptNumber.size() <= 64 &&
+             data.paymentStatus is string && data.paymentStatus.size() <= 32 &&
+             (!('customerName' in data) || (data.customerName is string && data.customerName.size() <= 128)) &&
+             (!('customerPhone' in data) || (data.customerPhone is string && data.customerPhone.size() <= 32)) &&
+             (!('customerEmail' in data) || (data.customerEmail is string && data.customerEmail.size() <= 256)) &&
+             (!('itemsSummary' in data) || (data.itemsSummary is string && data.itemsSummary.size() <= 2048)) &&
+             (!('createdAt' in data) || (data.createdAt is string && data.createdAt.size() <= 64));
+    }
+
+    function isValidBookReview(data) {
+      return data.keys().hasAll(['reviewId', 'bookId', 'userId', 'userName', 'rating', 'comment']) &&
+             data.keys().hasOnly(['reviewId', 'bookId', 'userId', 'userName', 'userAvatar', 'rating', 'title', 'comment', 'verifiedPurchase', 'helpfulCount', 'createdAt']) &&
+             data.userId == request.auth.uid &&
+             data.reviewId is string && data.reviewId.size() <= 64 &&
+             data.bookId is string && data.bookId.size() <= 64 &&
+             data.userName is string && data.userName.size() <= 128 &&
+             data.rating is number && data.rating >= 1 && data.rating <= 5 &&
+             data.comment is string && data.comment.size() <= 2048 &&
+             (!('userAvatar' in data) || (data.userAvatar is string && data.userAvatar.size() <= 1024)) &&
+             (!('title' in data) || (data.title is string && data.title.size() <= 256)) &&
+             (!('verifiedPurchase' in data) || (data.verifiedPurchase is bool)) &&
+             (!('helpfulCount' in data) || (data.helpfulCount is number && data.helpfulCount >= 0)) &&
+             (!('createdAt' in data) || (data.createdAt is string && data.createdAt.size() <= 64));
+    }
+
+    // User Profile
+    match /users/{userId} {
+      allow get: if isOwner(userId) && isValidId(userId);
+      allow create: if isOwner(userId) && isValidId(userId) && isValidUserProfile(incoming());
+      allow update: if isOwner(userId) && isValidId(userId) && isValidUserProfile(incoming()) && incoming().uid == existing().uid;
+      allow delete: if isOwner(userId) && isValidId(userId);
+
+      // Wishlist subcollection
+      match /wishlist/{bookId} {
+        allow get: if isOwner(userId) && isValidId(bookId);
+        allow list: if isOwner(userId);
+        allow create: if isOwner(userId) && isValidId(bookId) && isValidWishlistItem(incoming());
+        allow update: if isOwner(userId) && isValidId(bookId) && isValidWishlistItem(incoming()) && incoming().userId == existing().userId;
+        allow delete: if isOwner(userId) && isValidId(bookId);
+      }
+
+      // Cart subcollection
+      match /cart/{bookId} {
+        allow get: if isOwner(userId) && isValidId(bookId);
+        allow list: if isOwner(userId);
+        allow create: if isOwner(userId) && isValidId(bookId) && isValidCartItem(incoming());
+        allow update: if isOwner(userId) && isValidId(bookId) && isValidCartItem(incoming()) && incoming().userId == existing().userId;
+        allow delete: if isOwner(userId) && isValidId(bookId);
+      }
+
+      // Orders subcollection
+      match /orders/{orderId} {
+        allow get: if isOwner(userId) && isValidId(orderId);
+        allow list: if isOwner(userId);
+        allow create: if isOwner(userId) && isValidId(orderId) && isValidUserOrder(incoming());
+        allow update: if false; // Orders are immutable once placed
+        allow delete: if false;
+      }
+    }
+
+    // Public Book Reviews subcollection
+    match /books/{bookId}/reviews/{reviewId} {
+      allow get: if isValidId(bookId) && isValidId(reviewId);
+      allow list: if isValidId(bookId);
+      allow create: if isSignedIn() && isValidId(bookId) && isValidId(reviewId) && isValidBookReview(incoming());
+      allow update: if isSignedIn() && isValidId(bookId) && isValidId(reviewId) && isValidBookReview(incoming()) && isOwner(existing().userId) && incoming().userId == existing().userId;
+      allow delete: if isSignedIn() && isValidId(bookId) && isValidId(reviewId) && isOwner(existing().userId);
+    }
+
+    // Healthcheck Test Connection
+    match /test/{testId} {
+      allow get: if isValidId(testId);
+      allow list, write: if false;
+    }
+  }
+}

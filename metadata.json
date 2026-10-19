@@ -1,0 +1,8 @@
+{
+  "name": "KitabuFlix",
+  "description": "Premium digital bookstore featuring a cinematic Netflix-style experience, curated genres, liquid glassmorphism, instant previews, wishlist, and seamless M-Pesa checkout.",
+  "requestFramePermissions": [],
+  "majorCapabilities": [
+    "MAJOR_CAPABILITY_SERVER_SIDE_GEMINI_API"
+  ]
+}
